@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NFA → DFA Visualizer</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+
+        <div>
+            <h1>NFA → DFA Visualizer</h1>
+
+            <p>
+                Build, test and convert a Non-deterministic Finite Automaton
+                into a Deterministic Finite Automaton.
+            </p>
+        </div>
+
+        <div class="header-badge">
+            Computer Science Project
+        </div>
+
+    </header>
+
+
+    <!-- MAIN CONTAINER -->
+    <main class="container">
+
+
+        <!-- =========================================
+             LEFT CONTROL PANEL
+        ========================================== -->
+
+        <aside class="sidebar">
+
+
+            <!-- CREATE STATES -->
+            <section class="panel">
+
+                <h2>1. Create States</h2>
+
+                <div class="input-row">
+
+                    <input
+                        type="text"
+                        id="stateName"
+                        placeholder="State name e.g. q0"
+                    >
+
+                    <button
+                        id="addStateBtn"
+                        class="primary"
+                    >
+                        Add
+                    </button>
+
+                </div>
+
+
+                <button
+                    id="setStartModeBtn"
+                    class="tool-btn"
+                >
+                    Set Start State
+                </button>
+
+
+                <button
+                    id="setFinalModeBtn"
+                    class="tool-btn"
+                >
+                    Set Final State
+                </button>
+
+
+                <button
+                    id="deleteStateBtn"
+                    class="danger full"
+                >
+                    Delete Selected State
+                </button>
+
+
+                <div
+                    id="stateList"
+                    class="list"
+                ></div>
+
+            </section>
+
+
+            <!-- ADD TRANSITION -->
+            <section class="panel">
+
+                <h2>2. Add Transition</h2>
+
+
+                <label>
+                    From State
+                </label>
+
+                <select id="fromState">
+
+                    <option value="">
+                        Select state
+                    </option>
+
+                </select>
+
+
+                <label>
+                    Input Symbol
+                </label>
+
+                <input
+                    type="text"
+                    id="transitionSymbol"
+                    placeholder="e.g. 0"
+                    maxlength="5"
+                >
+
+
+                <label>
+                    To State
+                </label>
+
+                <select id="toState">
+
+                    <option value="">
+                        Select state
+                    </option>
+
+                </select>
+
+
+                <button
+                    id="addTransitionBtn"
+                    class="primary full"
+                >
+                    Add Transition
+                </button>
+
+
+                <div
+                    id="transitionList"
+                    class="list"
+                ></div>
+
+            </section>
+
+
+            <!-- ACTIONS -->
+            <section class="panel">
+
+                <h2>3. Actions</h2>
+
+
+                <button
+                    id="convertBtn"
+                    class="convert full"
+                >
+                    Convert NFA → DFA
+                </button>
+
+
+                <!-- STRING TESTING -->
+
+                <div class="string-test-section">
+
+                    <h2>Test a String</h2>
+
+                    <p>
+                        Enter a string to check whether the NFA
+                        accepts or rejects it.
+                    </p>
+
+
+                    <div class="string-test-controls">
+
+                        <input
+                            type="text"
+                            id="testString"
+                            placeholder="Enter string e.g. 01"
+                        >
+
+                        <button
+                            id="checkStringBtn"
+                        >
+                            Check String
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        id="stringResult"
+                        class="string-result"
+                    >
+                        Enter a string and click
+                        "Check String".
+                    </div>
+
+
+                    <div
+                        id="stringPath"
+                        class="string-path"
+                    ></div>
+
+                </div>
+
+
+                <button
+                    id="clearBtn"
+                    class="danger full"
+                >
+                    Clear Everything
+                </button>
+
+            </section>
+
+        </aside>
+
+
+
+        <!-- =========================================
+             MAIN WORKSPACE
+        ========================================== -->
+
+        <section class="workspace">
+
+
+            <!-- TOOLBAR -->
+
+            <div class="toolbar">
+
+                <div>
+
+                    <h2>NFA Diagram</h2>
+
+                    <p>
+                        Create states and transitions
+                        using the controls.
+                    </p>
+
+                </div>
+
+
+                <div
+                    id="status"
+                    class="status"
+                >
+                    Ready
+                </div>
+
+            </div>
+
+
+            <!-- CANVAS -->
+
+            <div
+                id="canvasContainer"
+                class="canvas-container"
+            >
+
+                <svg
+                    id="connectionSvg"
+                ></svg>
+
+                <div
+                    id="stateCanvas"
+                ></div>
+
+            </div>
+
+
+            <!-- DFA RESULT -->
+
+            <section class="result-section">
+
+                <div class="result-header">
+
+                    <div>
+
+                        <h2>DFA Result</h2>
+
+                        <p>
+                            Subset construction result
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="dfaMessage"
+                    class="empty-result"
+                >
+                    Click "Convert NFA → DFA"
+                    to generate the DFA.
+                </div>
+
+
+                <div
+                    id="dfaResult"
+                    class="hidden"
+                >
+
+                    <div class="dfa-info">
+
+                        <div class="info-box">
+
+                            <span>
+                                DFA States
+                            </span>
+
+                            <strong
+                                id="dfaStateCount"
+                            >
+                                0
+                            </strong>
+
+                        </div>
+
+
+                        <div class="info-box">
+
+                            <span>
+                                DFA Start
+                            </span>
+
+                            <strong
+                                id="dfaStart"
+                            >
+                                -
+                            </strong>
+
+                        </div>
+
+
+                        <div class="info-box">
+
+                            <span>
+                                DFA Final States
+                            </span>
+
+                            <strong
+                                id="dfaFinal"
+                            >
+                                -
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="table-wrapper">
+
+                        <table id="dfaTable">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        State
+                                    </th>
+
+                                    <th>
+                                        0
+                                    </th>
+
+                                    <th>
+                                        1
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </section>
+
+    </main>
+
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        NFA → DFA Visualizer |
+        Computer Science Project
+
+    </footer>
+
+
+    <!-- JAVASCRIPT -->
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
